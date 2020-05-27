@@ -7,13 +7,25 @@
 #define PI 3.1415926535
 
 static int window_width, window_height;
+static int animation_ongoing;
+static int kretanje[]={0, 0};
+
+double x_coveka=2;
+double y_coveka=0.7;
+double z_coveka=0;
+
+double x_puta=2;
+double y_puta=-0.5;
+double z_puta=3;
 
 static void draw_road(void);
 static void draw_human(void);
+static void kretanje_coveka(int value);
 
 static void on_display(void);
 static void on_keyboard(unsigned char key, int x, int y);
 static void on_reshape(int width, int height);
+static void on_release(unsigned char key, int x, int y);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
@@ -25,10 +37,13 @@ int main(int argc, char** argv){
 
 	glutKeyboardFunc(on_keyboard);
 	glutReshapeFunc(on_reshape);
+	glutKeyboardUpFunc(on_release);
 	glutDisplayFunc(on_display);
 
 	glClearColor(0, 0.5, 1, 0);
 	glEnable(GL_DEPTH_TEST);
+
+	animation_ongoing=0;
 
 	glutMainLoop();
 
@@ -37,14 +52,29 @@ int main(int argc, char** argv){
 
 static void on_keyboard(unsigned char key, int x, int y){
 	switch(key){
-		case 'q':
+		case 27:
 			exit(0);
 			break;
-		case 'r'://skrece desno
-			
+		case 'S':
+		case 's'://pokrece se
+			if(!animation_ongoing){
+				glutTimerFunc(40, kretanje_coveka, 0);
+				animation_ongoing=1;
+			}
 			break;
-		case 'l'://skrece levo
-			
+		case 'R':
+		case 'r'://pauzira se
+			animation_ongoing=0;
+			break;
+		case 'D':
+		case 'd'://skrece desno
+			kretanje[1]=1;
+			glutPostRedisplay();
+			break;
+		case 'A':
+		case 'a'://skrece levo
+			kretanje[0]=1;
+			glutPostRedisplay();
 			break;
 	}
 }
@@ -60,6 +90,19 @@ static void on_reshape(int width, int height){
 	gluPerspective(60, (float)window_width/window_height, 1, 1500);
 }
 
+static void on_release(unsigned char key, int x, int y){
+	switch(key){
+		case 'A':
+		case 'a':
+			kretanje[0]-=1;
+			break;
+		case 'D':
+		case 'd':
+			kretanje[1]-=1;
+			break;
+	}
+}
+
 static void on_display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -67,7 +110,7 @@ static void on_display(void){
 	glLoadIdentity();
 	gluLookAt(2, 2, -4, 2, 0, 2, 0, 1, 0);
 
-	//iscrtavamo ose
+	/*iscrtavamo ose
 	glBegin(GL_LINES);
 		//postavlja se x-osa
 		glColor3f(1, 1, 1);
@@ -83,7 +126,7 @@ static void on_display(void){
 		glColor3f(0, 0, 1);
 		glVertex3f(0, 0, 100);
 		glVertex3f(0, 0, -100);
-    	glEnd();
+    	glEnd();*/
 
 	draw_road();
 	draw_human();
@@ -94,7 +137,7 @@ static void on_display(void){
 static void draw_road(){
 	glPushMatrix();
         	glColor3f(1, 0, 0);
-        	glTranslatef(2, -0.5, 3);
+        	glTranslatef(x_puta, y_puta, z_puta);
         	glScalef(4.5, 0.5, 5);
         	glutSolidCube(1);
 	glPopMatrix();
@@ -105,7 +148,7 @@ static void draw_human(){
 	glLineWidth(5);
 
 	glPushMatrix();
-		glTranslatef(2, 0.70, 0);
+		glTranslatef(x_coveka, y_coveka, z_coveka);
 
 		//iscrtava glavu
 		glBegin(GL_POLYGON);
@@ -145,4 +188,29 @@ static void draw_human(){
 		glEnd();
 
 	glPopMatrix();
+}
+
+static void kretanje_coveka(int value){
+	if(value){
+		return;	
+	}
+
+	if(kretanje[0] && x_coveka<3.5){
+		x_coveka+=0.1;
+	}
+	if(kretanje[1] && x_coveka>0.5){
+		x_coveka-=0.1;
+	}
+
+	z_puta-=0.2;
+
+	if(z_puta<-4){
+		z_puta=14;
+	}
+
+	glutPostRedisplay();
+
+	if(animation_ongoing){
+		glutTimerFunc(40, kretanje_coveka, 0);
+	}
 }
