@@ -10,17 +10,36 @@ static int window_width, window_height;
 static int animation_ongoing;
 static int kretanje[]={0, 0};
 
-double x_coveka=2;
-double y_coveka=0.7;
-double z_coveka=0;
+static double x_coveka=2;
+static double y_coveka=0.7;
+static double z_coveka=0;
 
-double x_puta=2;
-double y_puta=-0.5;
-double z_puta=3;
+static double x_puta_prvog=2;
+static double y_puta_prvog=-0.5;
+static double z_puta_prvog=3;
 
-static void draw_road(void);
+static double x_puta_drugog=2;
+static double y_puta_drugog=-0.5;
+static double z_puta_drugog=10;
+
+typedef struct{
+	double x;
+	double y;
+	double z;
+} Prepreka;
+
+Prepreka prepreke1[80];
+Prepreka prepreke2[80];
+
+static int prva_poz;
+static int druga_poz;
+
 static void draw_human(void);
 static void kretanje_coveka(int value);
+static void postavi_prepreke();
+static void iscrtaj_loptice(int x, int y, int z);
+static void iscrtaj_put_prvi();
+static void iscrtaj_put_drugi();
 
 static void on_display(void);
 static void on_keyboard(unsigned char key, int x, int y);
@@ -121,25 +140,39 @@ static void on_display(void){
 		glColor3f(0, 1, 0);
 		glVertex3f(0, 100, 0);
 		glVertex3f(0, -100, 0);
-
 		//postavlja se z-osa
 		glColor3f(0, 0, 1);
 		glVertex3f(0, 0, 100);
 		glVertex3f(0, 0, -100);
     	glEnd();*/
 
-	draw_road();
+	iscrtaj_put_prvi();
+	iscrtaj_put_drugi();
 	draw_human();
+
+	for(int i=0;i<prva_poz;i++){
+		Prepreka pr=prepreke1[i];
+		iscrtaj_loptice(pr.x, pr.y, pr.z);
+	}
 
 	glutSwapBuffers();
 }
 
-static void draw_road(){
+void iscrtaj_put_prvi(){
 	glPushMatrix();
-        	glColor3f(1, 0, 0);
-        	glTranslatef(x_puta, y_puta, z_puta);
-        	glScalef(4.5, 0.5, 5);
-        	glutSolidCube(1);
+		glColor3f(1, 0, 0);
+		glTranslatef(x_puta_prvog, y_puta_prvog, z_puta_prvog);
+		glScalef(4, 0.25, 42);
+		glutSolidCube(1);
+	glPopMatrix();
+}
+
+void iscrtaj_put_drugi(){
+	glPushMatrix();
+		glColor3f(1, 0, 0);
+		glTranslatef(x_puta_drugog, y_puta_drugog, z_puta_drugog);
+		glScalef(4, 0.25, 42);
+		glutSolidCube(1);
 	glPopMatrix();
 }
 
@@ -202,10 +235,19 @@ static void kretanje_coveka(int value){
 		x_coveka-=0.1;
 	}
 
-	z_puta-=0.2;
+	z_puta_prvog-=0.1;
+	z_puta_drugog-=0.1;
 
-	if(z_puta<-4){
-		z_puta=14;
+	for(int i=0;i<prva_poz;i++){
+		prepreke1[i].z-=0.1;
+	}
+
+	if(z_puta_prvog<=-4){
+		z_puta_prvog=14;
+		postavi_prepreke();
+	}
+	if(z_puta_drugog<=-4){
+		z_puta_drugog=14;
 	}
 
 	glutPostRedisplay();
@@ -213,4 +255,24 @@ static void kretanje_coveka(int value){
 	if(animation_ongoing){
 		glutTimerFunc(40, kretanje_coveka, 0);
 	}
+}
+
+void postavi_prepreke(){
+	int broj_prepreka=0;
+	prva_poz=0;
+	for(int i=7;i<42;i+=7){
+		Prepreka pr;
+            	pr.x=(int)rand()%3+1;
+            	pr.y=0;
+            	pr.z=z_puta_prvog+i-19.5;
+            	prepreke1[prva_poz++]=pr;
+	}
+}
+
+void iscrtaj_loptice(int x, int y, int z){
+	glPushMatrix();
+        	glColor3f(0, 1, 0);
+        	glTranslatef(x, y+0.5, z);
+        	glutSolidSphere(0.125, 30, 30);
+    	glPopMatrix();
 }
