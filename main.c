@@ -22,6 +22,8 @@ static double x_puta_drugog=2;
 static double y_puta_drugog=-0.5;
 static double z_puta_drugog=10;
 
+static int loptica=0;
+
 typedef struct{
 	double x;
 	double y;
@@ -40,6 +42,9 @@ static void postavi_prepreke();
 static void iscrtaj_loptice(int x, int y, int z);
 static void iscrtaj_put_prvi();
 static void iscrtaj_put_drugi();
+static void kolizija();
+static float udaljenost(Prepreka pr);
+static void postavi_prepreke();
 
 static void on_display(void);
 static void on_keyboard(unsigned char key, int x, int y);
@@ -155,6 +160,11 @@ static void on_display(void){
 		iscrtaj_loptice(pr.x, pr.y, pr.z);
 	}
 
+	for(int i=0;i<druga_poz;i++){
+		Prepreka pr=prepreke2[i];
+		iscrtaj_loptice(pr.x, pr.y, pr.z);
+	}
+
 	glutSwapBuffers();
 }
 
@@ -235,20 +245,25 @@ static void kretanje_coveka(int value){
 		x_coveka-=0.1;
 	}
 
-	z_puta_prvog-=0.1;
-	z_puta_drugog-=0.1;
-
-	for(int i=0;i<prva_poz;i++){
-		prepreke1[i].z-=0.1;
-	}
-
-	if(z_puta_prvog<=-4){
+	if(z_puta_prvog<=-6){
 		z_puta_prvog=14;
 		postavi_prepreke();
 	}
-	if(z_puta_drugog<=-4){
+	if(z_puta_drugog<=-8){
 		z_puta_drugog=14;
 	}
+
+	z_puta_prvog-=0.1+loptica;
+	z_puta_drugog-=0.1+loptica;
+
+	for(int i=0;i<prva_poz;i++){
+		prepreke1[i].z-=0.1+loptica;
+	}
+	for(int i=0;i<prva_poz;i++){
+		prepreke2[i].z-=0.1+loptica;
+	}
+
+	kolizija();
 
 	glutPostRedisplay();
 
@@ -257,7 +272,7 @@ static void kretanje_coveka(int value){
 	}
 }
 
-void postavi_prepreke(){
+static void postavi_prepreke(){
 	int broj_prepreka=0;
 	prva_poz=0;
 	for(int i=7;i<42;i+=7){
@@ -275,4 +290,29 @@ void iscrtaj_loptice(int x, int y, int z){
         	glTranslatef(x, y+0.5, z);
         	glutSolidSphere(0.125, 30, 30);
     	glPopMatrix();
+}
+
+float udaljenost(Prepreka pr){
+	float x=pow((pr.x-x_coveka), 2);
+	float y=pow((pr.y-y_coveka), 2);
+	float z=pow((pr.z-z_coveka), 2);
+
+	return sqrt(x+y+z);
+}
+
+void kolizija(){
+	if(z_puta_prvog<z_puta_drugog){
+		for(int i=0;i<prva_poz;i++){
+			if(udaljenost(prepreke1[i])<=1.5){
+				loptica=0.2;
+			}
+		}
+	}
+	else{
+		for(int i=0;i<druga_poz;i++){
+			if(udaljenost(prepreke2[i])<=1.5){
+				loptica=0.2;
+			}
+		}
+	}
 }
