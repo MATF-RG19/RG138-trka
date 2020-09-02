@@ -1,7 +1,7 @@
 # RG138-trka
 # Trka
 
-Trka je igrica u C-u koja prati nekog coveka koji trci na poligonu i cilj je da skupi sto vise poena. Ako sakupi kamen, igra je zavrsena. Ako sakupi nitro, covek ubrzava i posle nekog vremena usporava. Svaki sakupljeni nitro, vrestost poena se uvecava. Igra se igra u tri faze, u svakoj fazi se povecava broj prepreka
+Trka je igrica u C-u koja prati nekog coveka koji trci na poligonu i sakuplja poene. Ako sakupi kamen, igra je zavrsena. Ako sakupi nitro, covek ubrzava i posle nekog vremena usporava. Svaki sakupljeni nitro, vrednost poena se uvecava. Igra se igra u tri faze, u svakoj fazi se povecava broj prepreka. Cilj je sakupiti sto vise poena.
 
 ### Komande:
 'S', 's'-zapocinjemo igru <br>
