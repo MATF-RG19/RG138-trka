@@ -1,13 +1,16 @@
-PROGRAM = main
+PROGRAM = Trka
 CC = gcc
-FLAGS = -Wall
-LIBS = -lGL -lGLU -lglut -lm
+CFLAGS  = -g -Wall -I/usr/X11R6/include -I/usr/pkg/include
+LDFLAGS = -L/usr/X11R6/lib -L/usr/pkg/lib
+LDLIBS  = -lglut -lGLU -lGL -lm
 
-$(PROGRAM): main.o	
-	$(CC) $(FLAGS) -o $(PROGRAM) main.o $(LIBS)	
+$(PROGRAM): main.o image.o
+	$(CC) $(LDFLAGS) -o $(PROGRAM) image.o main.o $(LDLIBS)
 
-.PHONY:
-	clean
+.PHONY: clean dist
 
 clean:
-	-rm *.o $(PROGRAM)
+	-rm *.o $(PROGRAM) *core
+
+dist: clean
+	-tar -chvj -C .. -f ../$(PROGRAM).tar.bz2 $(PROGRAM)
