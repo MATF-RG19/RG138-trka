@@ -16,4 +16,4 @@ git clone https://github.com/MATF-RG19/RG138-trka.git
 cd RG138-trka
 ```
 1. Pokrenite Makefile `make` <br>
-2. Pokretanje igrice `./Trka`
+2. Pokretanje igrice `./Trka
