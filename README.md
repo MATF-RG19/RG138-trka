@@ -18,6 +18,6 @@ cd RG138-trka
 
 ### Pokretanje igrice:
 ```
-1. Pokrenite Makefile `make` <br>
+1. Pokrenite Makefile `make`
 2. Pokretanje igrice `./Trka
 ```
