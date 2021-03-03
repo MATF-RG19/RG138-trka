@@ -10,10 +10,14 @@ Trka je igrica u C-u koja prati nekog coveka koji trci na poligonu i sakuplja po
 'P', 'p'-pauzira se igra <br>
 'R', 'r'-igra se ponovo pokrece <br>
 
-### Pokretanje igrice:
+### Skidanje repozitorijuma:
 ```
 git clone https://github.com/MATF-RG19/RG138-trka.git
 cd RG138-trka
 ```
+
+### Pokretanje igrice:
+```
 1. Pokrenite Makefile `make` <br>
 2. Pokretanje igrice `./Trka
+```
